@@ -25,14 +25,6 @@ func (m Currency) Decimals() int16 {
 	return m.decimals
 }
 
-var currencyDecimals = map[string]int16{
-	"USD": USDDecimals,
-	"EUR": EURDecimals,
-	"CNY": YuanDecimals,
-	"MAD": MADDecimals,
-	"JPY": JPYDecimals,
-}
-
 type currencyJSON struct {
 	Amount   int64  `json:"amount"`
 	Currency string `json:"currency"`
@@ -56,11 +48,11 @@ func (m *Currency) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	if tmp.Currency == "" {
-		return ErrUnsupportedCurrency
+		return ErrInvalidCurrency
 	}
 	decimals := tmp.Decimals
 	if decimals == nil {
-		derived, ok := currencyDecimals[tmp.Currency]
+		derived, ok := DecimalsFor(tmp.Currency)
 		if !ok {
 			return ErrUnsupportedCurrency
 		}
@@ -75,12 +67,34 @@ func (m *Currency) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// ToFloat converts the Currency amount to a float64 representation.
+// ToFloat converts the Currency amount to major units as float64.
 func (m Currency) ToFloat() float64 {
 	if m.decimals <= 0 {
 		return float64(m.Amount)
 	}
 	return float64(m.Amount) / float64(pow10(int(m.decimals)))
+}
+
+// ToMinorFloat converts the Currency amount to minor units as float64.
+func (m Currency) ToMinorFloat() float64 {
+	return float64(m.Amount)
+}
+
+// DecimalString renders the Currency amount as a decimal string in major units.
+func (m Currency) DecimalString() string {
+	if m.decimals <= 0 {
+		return fmt.Sprintf("%d", m.Amount)
+	}
+	sign := ""
+	abs := m.Amount
+	if abs < 0 {
+		sign = "-"
+		abs = -abs
+	}
+	scale := pow10(int(m.decimals))
+	intPart := abs / scale
+	fracPart := abs % scale
+	return fmt.Sprintf("%s%d.%0*d", sign, intPart, int(m.decimals), fracPart)
 }
 
 func pow10(n int) int64 {

@@ -32,3 +32,24 @@ func TestAddDifferentCurrencies(t *testing.T) {
 	_, err := money.Add(a, b)
 	assert.ErrorIs(t, err, money.ErrDifferentCurrency)
 }
+
+func TestAddDifferentDecimals(t *testing.T) {
+	a, err := money.ParseAmount("USD", "1.00")
+	assert.NoError(t, err)
+
+	b, err := money.ParseAmount("USD", "1.000", money.WithDecimals(3))
+	assert.NoError(t, err)
+
+	_, err = money.Add(a, b)
+	assert.ErrorIs(t, err, money.ErrDifferentCurrency)
+}
+
+func TestSum(t *testing.T) {
+	a := money.EUR(100)
+	b := money.EUR(200)
+	c := money.EUR(300)
+
+	total, err := money.Sum(a, b, c)
+	assert.NoError(t, err)
+	assert.Equal(t, money.EUR(600), total)
+}

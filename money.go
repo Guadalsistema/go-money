@@ -9,7 +9,7 @@ import (
 type Currency struct {
 	Amount   int64  `json:"amount"`   // Integer value
 	Currency string `json:"currency"` // Code of the currency (e.g., "USD", "EUR")
-	decimals int16  `json:"decimals"` // Number of decimal places
+	decimals int16
 }
 
 // Some values for common currencies
@@ -85,7 +85,7 @@ func (m Currency) ToFloat() float64 {
 
 func pow10(n int) int64 {
 	result := int64(1)
-	for i := 0; i < n; i++ {
+	for range n {
 		result *= 10
 	}
 	return result

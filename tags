@@ -59,8 +59,11 @@
 !_TAG_ROLE_DESCRIPTION!Go!unknown	receiverType	/receiver type/
 Add	op.go	/^func Add(a, b Currency) (Currency, error) {$/;"	f	package:currency	typeref:typename:(Currency, error)
 Amount	money.go	/^	Amount   int64  `json:"amount"`   \/\/ Integer value$/;"	m	struct:currency.Currency	typeref:typename:int64
+Amount	money.go	/^	Amount   int64  `json:"amount"`$/;"	m	struct:currency.currencyJSON	typeref:typename:int64
 Currency	money.go	/^	Currency string `json:"currency"` \/\/ Code of the currency (e.g., "USD", "EUR")$/;"	m	struct:currency.Currency	typeref:typename:string
+Currency	money.go	/^	Currency string `json:"currency"`$/;"	m	struct:currency.currencyJSON	typeref:typename:string
 Currency	money.go	/^type Currency struct {$/;"	s	package:currency
+Decimals	money.go	/^	Decimals *int16 `json:"decimals,omitempty"`$/;"	m	struct:currency.currencyJSON	typeref:typename:*int16
 Decimals	money.go	/^func (m Currency) Decimals() int16 {$/;"	f	struct:currency.Currency	typeref:typename:int16
 Divide	op.go	/^func Divide(a Currency, divisor float64) Currency {$/;"	f	package:currency	typeref:typename:Currency
 EUR	definitions.go	/^func EUR(amount int64) Currency {$/;"	f	package:currency	typeref:typename:Currency
@@ -70,24 +73,34 @@ ErrUnsupportedCurrency	error.go	/^	ErrUnsupportedCurrency = errors.New("unsuppor
 FromFloat	money.go	/^func FromFloat(amount float64, currency Currency) Currency {$/;"	f	package:currency	typeref:typename:Currency
 JPYDecimals	money.go	/^	JPYDecimals  = 0$/;"	c	package:currency
 MADDecimals	money.go	/^	MADDecimals  = 2$/;"	c	package:currency
+MarshalJSON	money.go	/^func (m Currency) MarshalJSON() ([]byte, error) {$/;"	f	struct:currency.Currency	typeref:typename:([]byte, error)
 MorroccanDirham	definitions.go	/^func MorroccanDirham(amount int64) Currency {$/;"	f	package:currency	typeref:typename:Currency
 Multiply	op.go	/^func Multiply(a Currency, factor float64) Currency {$/;"	f	package:currency	typeref:typename:Currency
 Subtract	op.go	/^func Subtract(a, b Currency) (Currency, error) {$/;"	f	package:currency	typeref:typename:(Currency, error)
 TestAdd	op_test.go	/^func TestAdd(t *testing.T) {$/;"	f	package:currency_test
 TestAddDifferentCurrencies	op_test.go	/^func TestAddDifferentCurrencies(t *testing.T) {$/;"	f	package:currency_test
+TestCurrencyJSONInferDecimals	money_test.go	/^func TestCurrencyJSONInferDecimals(t *testing.T) {$/;"	f	package:currency_test
+TestCurrencyJSONRoundTrip	money_test.go	/^func TestCurrencyJSONRoundTrip(t *testing.T) {$/;"	f	package:currency_test
+TestCurrencyJSONUnsupportedCurrency	money_test.go	/^func TestCurrencyJSONUnsupportedCurrency(t *testing.T) {$/;"	f	package:currency_test
 TestSubtract	op_test.go	/^func TestSubtract(t *testing.T) {$/;"	f	package:currency_test
+TestUnmarshalJSONWithoutDecimals	money_test.go	/^func TestUnmarshalJSONWithoutDecimals(t *testing.T) {$/;"	f	package:currency_test
 ToFloat	money.go	/^func (m Currency) ToFloat() float64 {$/;"	f	struct:currency.Currency	typeref:typename:float64
 USD	definitions.go	/^func USD(amount int64) Currency {$/;"	f	package:currency	typeref:typename:Currency
 USDDecimals	money.go	/^	USDDecimals  = 2$/;"	c	package:currency
+UnmarshalJSON	money.go	/^func (m *Currency) UnmarshalJSON(data []byte) error {$/;"	f	struct:currency.Currency	typeref:typename:error
 Yuan	definitions.go	/^func Yuan(amount int64) Currency {$/;"	f	package:currency	typeref:typename:Currency
 YuanDecimals	money.go	/^	YuanDecimals = 2$/;"	c	package:currency
 currency	definitions.go	/^package currency$/;"	p
 currency	error.go	/^package currency$/;"	p
 currency	money.go	/^package currency$/;"	p
 currency	op.go	/^package currency$/;"	p
+currencyDecimals	money.go	/^var currencyDecimals = map[string]int16{$/;"	v	package:currency
+currencyJSON	money.go	/^type currencyJSON struct {$/;"	s	package:currency
+currency_test	money_test.go	/^package currency_test$/;"	p
 currency_test	op_test.go	/^package currency_test$/;"	p
-decimals	money.go	/^	decimals int16  `json:"decimals"` \/\/ Number of decimal places$/;"	m	struct:currency.Currency	typeref:typename:int16
+decimals	money.go	/^	decimals int16$/;"	m	struct:currency.Currency	typeref:typename:int16
 go-money	README.md	/^# go-money$/;"	c
 minus	op.go	/^func minus(a, b Currency) (Currency, error) {$/;"	f	package:currency	typeref:typename:(Currency, error)
+money	money_test.go	/^	money "github.com\/Guadalsistema\/go-money"$/;"	P	package:github.com/Guadalsistema/go-money
 money	op_test.go	/^	money "github.com\/Guadalsistema\/go-money"$/;"	P	package:github.com/Guadalsistema/go-money
 pow10	money.go	/^func pow10(n int) int64 {$/;"	f	package:currency	typeref:typename:int64

@@ -39,3 +39,20 @@ func TestCurrencyJSONUnsupportedCurrency(t *testing.T) {
 	err := json.Unmarshal(payload, &decoded)
 	assert.ErrorIs(t, err, money.ErrUnsupportedCurrency)
 }
+
+func TestUnmarshalJSONWithoutDecimals(t *testing.T) {
+	// JSON without decimals field, as might be produced by older versions or custom marshaling
+	jsonData := `{"amount":525,"currency":"EUR"}`
+
+	var m money.Currency
+	err := json.Unmarshal([]byte(jsonData), &m)
+	if err != nil {
+		t.Fatalf("Unmarshal failed: %v", err)
+	}
+
+	// For EUR with 2 decimals, amount 525 should represent 5.25
+	expected := 5.25
+	if got := m.ToFloat(); got != expected {
+		t.Errorf("ToFloat() = %v, expected %v (Decimals = %d)", got, expected, m.Decimals())
+	}
+}

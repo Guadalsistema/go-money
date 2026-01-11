@@ -1,5 +1,10 @@
 package currency
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 // Currency represents a monetary amount with currency and numbers of decimal places.
 type Currency struct {
 	Amount   int64  `json:"amount"`   // Integer value
@@ -18,6 +23,56 @@ const (
 
 func (m Currency) Decimals() int16 {
 	return m.decimals
+}
+
+var currencyDecimals = map[string]int16{
+	"USD": USDDecimals,
+	"EUR": EURDecimals,
+	"CNY": YuanDecimals,
+	"MAD": MADDecimals,
+	"JPY": JPYDecimals,
+}
+
+type currencyJSON struct {
+	Amount   int64  `json:"amount"`
+	Currency string `json:"currency"`
+	Decimals *int16 `json:"decimals,omitempty"`
+}
+
+// MarshalJSON ensures decimals are included in the JSON representation.
+func (m Currency) MarshalJSON() ([]byte, error) {
+	decimals := m.decimals
+	return json.Marshal(currencyJSON{
+		Amount:   m.Amount,
+		Currency: m.Currency,
+		Decimals: &decimals,
+	})
+}
+
+// UnmarshalJSON restores the currency and decimals, inferring decimals when omitted.
+func (m *Currency) UnmarshalJSON(data []byte) error {
+	var tmp currencyJSON
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+	if tmp.Currency == "" {
+		return ErrUnsupportedCurrency
+	}
+	decimals := tmp.Decimals
+	if decimals == nil {
+		derived, ok := currencyDecimals[tmp.Currency]
+		if !ok {
+			return ErrUnsupportedCurrency
+		}
+		decimals = &derived
+	}
+	if *decimals < 0 {
+		return fmt.Errorf("invalid decimals: %d", *decimals)
+	}
+	m.Amount = tmp.Amount
+	m.Currency = tmp.Currency
+	m.decimals = *decimals
+	return nil
 }
 
 // ToFloat converts the Currency amount to a float64 representation.
